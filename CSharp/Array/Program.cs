@@ -1,4 +1,5 @@
 ﻿namespace Array
+
 {
     internal class Program
     {
