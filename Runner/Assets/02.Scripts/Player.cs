@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
             onHpChanged(value);
         }
     }
-    [SerializeField] private float _hp; // Serialize : µ¥ÀÌÅÍ¸¦ ÅØ½ºÆ®·Î, Deserialize : ÅØ½ºÆ®¸¦ µ¥ÀÌÅÍ·Î
+    [SerializeField] private float _hp; // Serialize : ë°ì´í„°ë¥¼ í…ìŠ¤íŠ¸ë¡œ, Deserialize : í…ìŠ¤íŠ¸ë¥¼ ë°ì´í„°ë¡œ
 
     public float hpMax
     {
@@ -43,28 +43,28 @@ public class Player : MonoBehaviour
     //public event OnHpChangedHandler onHpChanged;
     public event Action<float> onHpChanged;
 
-    // Action ´ë¸®ÀÚ
-    // ÆÄ¶ó¹ÌÅÍ¸¦ 0~ 16°³ ±îÁö ¹ŞÀ» ¼ö ÀÖ´Â 
-    // void ¸¦ ¹İÈ¯ÇÏ´Â ÇüÅÂÀÇ ´ë¸®ÀÚ.
+    // Action ëŒ€ë¦¬ì
+    // íŒŒë¼ë¯¸í„°ë¥¼ 0~ 16ê°œ ê¹Œì§€ ë°›ì„ ìˆ˜ ìˆëŠ” 
+    // void ë¥¼ ë°˜í™˜í•˜ëŠ” í˜•íƒœì˜ ëŒ€ë¦¬ì.
     public Action<int, float, string> action;
 
-    // Func ´ë¸®ÀÚ
-    // ÆÄ¶ó¹ÌÅÍ¸¦ 0~ 16°³ ±îÁö ¹ŞÀ» ¼ö ÀÖ´Â
-    // Á¦³×¸¯Å¸ÀÔÀ» ¹İÈ¯ÇÏ´Â ÇüÅÂÀÇ ´ë¸®ÀÚ.
+    // Func ëŒ€ë¦¬ì
+    // íŒŒë¼ë¯¸í„°ë¥¼ 0~ 16ê°œ ê¹Œì§€ ë°›ì„ ìˆ˜ ìˆëŠ”
+    // ì œë„¤ë¦­íƒ€ì…ì„ ë°˜í™˜í•˜ëŠ” í˜•íƒœì˜ ëŒ€ë¦¬ì.
     public Func<int, float, string> func;
 
-    // Predicate ´ë¸®ÀÚ
-    // ÆÄ¶ó¹ÌÅÍ 1°³ ¹Ş°í,
-    // bool Å¸ÀÔ ¹İÈ¯ÇÏ´Â ÇüÅÂÀÇ ´ë¸®ÀÚ.
-    // ¾î¶² ¾ÆÀÌÅÛÀÇ match Á¶°ÇÀ» °Ë»çÇÒ¶§ »ç¿ëÇÔ. (ÀÚ·á±¸Á¶¿¡¼­ Æ¯Á¤ ÀÚ·á Å½»öÀ» ÇØ¾ßÇÒ¶§ ÁÖ·Î ¾¸)
+    // Predicate ëŒ€ë¦¬ì
+    // íŒŒë¼ë¯¸í„° 1ê°œ ë°›ê³ ,
+    // bool íƒ€ì… ë°˜í™˜í•˜ëŠ” í˜•íƒœì˜ ëŒ€ë¦¬ì.
+    // ì–´ë–¤ ì•„ì´í…œì˜ match ì¡°ê±´ì„ ê²€ì‚¬í• ë•Œ ì‚¬ìš©í•¨. (ìë£Œêµ¬ì¡°ì—ì„œ íŠ¹ì • ìë£Œ íƒìƒ‰ì„ í•´ì•¼í• ë•Œ ì£¼ë¡œ ì”€)
     public Predicate<int> match;
 
 
     // Generic 
-    // ¾î¶² Å¸ÀÔÀ» ÀÏ¹İÈ­ÇÏ´Â »ç¿ëÀÚÁ¤ÀÇ ¼­½Ä
+    // ì–´ë–¤ íƒ€ì…ì„ ì¼ë°˜í™”í•˜ëŠ” ì‚¬ìš©ìì •ì˜ ì„œì‹
     
-    // where ÇÑÁ¤ÀÚ
-    // GenericÅ¸ÀÔÀÌ ¾î¶² Å¸ÀÔÀ¸·Î °øº¯°¡´ÉÇÑÁö Á¦ÇÑÀ» °Å´Â ÇÑÁ¤ÀÚ
+    // where í•œì •ì
+    // Genericíƒ€ì…ì´ ì–´ë–¤ íƒ€ì…ìœ¼ë¡œ ê³µë³€ê°€ëŠ¥í•œì§€ ì œí•œì„ ê±°ëŠ” í•œì •ì
     public T Sum<T>(T a, T b)
         where T : Operatable<T>
         => (a + b).value;
