@@ -24,6 +24,25 @@ public class PlayManager : MonoBehaviour
         _instance = this;
     }
 
+    public Runner lead
+    {
+        get
+        {
+            if (_runnerFinishedCount > 0)
+            {
+                return _runnersFinished[0];
+            }
+
+            Runner runner = _runners[0];
+            for (int i = 1; i < _runners.Length; i++)
+            {
+                if (runner.transform.position.z < _runners[i].transform.position.z)
+                    runner = _runners[i];
+            }
+            return runner;
+        }
+    }
+
     private Runner[] _runners = new Runner[5];
     private Runner[] _runnersFinished = new Runner[5];
 
