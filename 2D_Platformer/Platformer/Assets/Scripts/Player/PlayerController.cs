@@ -8,21 +8,44 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float walkSpeed = 5;
     [SerializeField] private float runSpeed = 9;
     [SerializeField] private float jumpImpulse = 20;
+    [SerializeField] private float airWalkSpeed = 5;
+    [SerializeField] private float airRunSpeed = 9;
     Rigidbody2D rb;
 
     public float CurrentMoveSpeed
     {
         get
         {
-            if (IsMoving)
+            if (CanMove)
             {
-                if (IsRunning)
+                if (IsMoving && !TouchingDirections.IsOnWall)
                 {
-                    return runSpeed;
+                    if (TouchingDirections.IsGrounded)
+                    {
+                        if (IsRunning)
+                        {
+                            return runSpeed;
+                        }
+                        else
+                        {
+                            return walkSpeed;
+                        }
+                    }
+                    else
+                    {
+                        if (IsRunning)
+                        {
+                            return airRunSpeed;
+                        }
+                        else
+                        {
+                            return airWalkSpeed;
+                        }
+                    }
                 }
                 else
                 {
-                    return walkSpeed;
+                    return 0;
                 }
             }
             else
@@ -71,6 +94,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool CanMove
+    {
+        get
+        {
+            return animator.GetBool("CanMove");
+        }
+    }
 
     Vector2 moveInput;
     Animator animator;
@@ -121,6 +151,14 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetTrigger("Jump");
             rb.velocity = new Vector2(rb.velocity.x, jumpImpulse);
+        }
+    }
+    
+    public void OnFire(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            animator.SetTrigger("Attack");
         }
     }
 
