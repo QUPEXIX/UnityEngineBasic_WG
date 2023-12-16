@@ -73,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -1891896343
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -8421458170528590454, guid: 138040323294fd440a3a823e5d70ad01, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -128,13 +128,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: 76
   speed: 1
-  health: 30
+  health: 15
+  score: 300
   sprites:
   - {fileID: -8421458170528590454, guid: 138040323294fd440a3a823e5d70ad01, type: 3}
   - {fileID: 3714015224569861163, guid: 138040323294fd440a3a823e5d70ad01, type: 3}
   maxShotDelay: 0.8
   bulletObjA: {fileID: 5490201625852271790, guid: 7c6a397fca028ce43938b9afe2439ec2, type: 3}
   bulletObjB: {fileID: 5490201625852271790, guid: 2b285f6972760a940b1a195abf8bb4fb, type: 3}
+  player: {fileID: 0}
+  itemBoom: {fileID: 6053429899730744980, guid: 53ac9eda1512b4e47bec4fd85d842372, type: 3}
+  itemCoin: {fileID: 8665544660007082004, guid: 75529a23ef7de0944be642f427a4d9a9, type: 3}
+  itemPower: {fileID: 1463223616522173198, guid: a2cfae249e5ff8e4f97472a6e533c64e, type: 3}
 --- !u!60 &1402730412672919981
 PolygonCollider2D:
   m_ObjectHideFlags: 0

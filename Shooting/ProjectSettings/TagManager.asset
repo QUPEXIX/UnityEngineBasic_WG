@@ -10,6 +10,7 @@ TagManager:
   - PlayerBullet
   - BorderEnemy
   - EnemyBullet
+  - Item
   layers:
   - Default
   - TransparentFX
@@ -46,4 +47,19 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Skill
+    uniqueID: 355840995
+    locked: 0
+  - name: Enemy
+    uniqueID: 2403070953
+    locked: 0
+  - name: Player
+    uniqueID: 170457393
+    locked: 0
+  - name: Item
+    uniqueID: 574578273
+    locked: 0
+  - name: Bullet
+    uniqueID: 111810757
     locked: 0

@@ -1,17 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Player : MonoBehaviour
 {
     public float speed;
     public float health;
+    public float maxHealth;
     private bool isTouchTop;
     private bool isTouchBottom;
     private bool isTouchRight;
     private bool isTouchLeft;
 
-    public float power;
+    public int life;
+    public int maxLife;
+    public int score;
+    
+    public int power;
+    public bool isHaveBoom;
+    public int maxPower;
     public float maxShotDelay;
     private float curShotDelay;
     public float maxHitDelay;
@@ -19,6 +28,9 @@ public class Player : MonoBehaviour
 
     public GameObject bulletObjA;
     public GameObject bulletObjB;
+    public GameObject boomEffect;
+
+    SpriteRenderer spriteRenderer;
 
     public GameManager manager;
 
@@ -27,12 +39,15 @@ public class Player : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        life = maxLife;
     }
     void Update()
     {
         Move();
         Fire();
         Reload();
+        Boom();
     }
 
     void Move()
@@ -54,7 +69,7 @@ public class Player : MonoBehaviour
 
     void Fire()
     {
-        if (!Input.GetButton("Fire1"))
+        if (!Input.GetButton("Jump"))
             return;
         if (curShotDelay < maxShotDelay)
             return;
@@ -68,7 +83,7 @@ public class Player : MonoBehaviour
                 curShotDelay = 0;
                 break;
             case 2:
-                GameObject bullet2R = Instantiate(bulletObjA, transform.position + Vector3.right*0.2f, transform.rotation);
+                GameObject bullet2R = Instantiate(bulletObjA, transform.position + Vector3.right * 0.2f, transform.rotation);
                 GameObject bullet2L = Instantiate(bulletObjA, transform.position + Vector3.left * 0.2f, transform.rotation);
                 Rigidbody2D rigid2R = bullet2R.GetComponent<Rigidbody2D>();
                 Rigidbody2D rigid2L = bullet2L.GetComponent<Rigidbody2D>();
@@ -156,17 +171,18 @@ public class Player : MonoBehaviour
                     break;
             }
         }
-
-        if (collision.gameObject.tag == "EnemyBullet")
+        else if (collision.gameObject.tag == "EnemyBullet")
         {
             if (curHitDelay < maxHitDelay)
                 return;
             health -= collision.gameObject.GetComponent<Bullet>().dmg;
+            Destroy(collision.gameObject);
             curHitDelay = 0;
+            spriteRenderer.color = new Color(0, 0, 1, 0.5f);
+            Invoke("HitColor", maxHitDelay);
             if (health <= 0)
             {
-                manager.RespawnPlayer();
-                gameObject.SetActive(false);
+                Die();
             }
         }
         else if (collision.gameObject.tag == "Enemy")
@@ -175,13 +191,116 @@ public class Player : MonoBehaviour
                 return;
             health -= 1;
             curHitDelay = 0;
+            spriteRenderer.color = new Color(0, 0, 1, 0.5f);
+            Invoke("HitColor", maxHitDelay);
             if (health <= 0)
             {
-                manager.RespawnPlayer();
-                gameObject.SetActive(false);
+                Die();
             }
-
         }
+        else if (collision.gameObject.tag == "Item")
+        {
+            Item item = collision.gameObject.GetComponent<Item>();
+            switch (item.type)
+            {
+                case "Boom":
+                    if (isHaveBoom == true)
+                        score += 750;
+                    else
+                    {
+                        isHaveBoom = true;
+                        manager.UpdateBoomIcon();
+                    }
+                    break;
+                case "Coin":
+                    score += 1000;
+                    break;
+                case "Power":
+                    if (power >= maxPower)
+                        score += 500;
+                    else
+                    {
+                        power++;
+                        switch (power)
+                        {
+                            case 1:
+                                manager.SpawnDelay(1f, 4f);
+                                break;
+                            case 2:
+                                manager.SpawnDelay(1f, 3.5f);
+                                break;
+                            case 3:
+                                manager.SpawnDelay(1f, 3f);
+                                break;
+                            case 4:
+                                manager.SpawnDelay(1f, 2.5f);
+                                break;
+                            case 5:
+                                manager.SpawnDelay(1f, 2f);
+                                break;
+                            case 6:
+                                manager.SpawnDelay(1f, 1.5f);
+                                break;
+                            case 7:
+                                manager.SpawnDelay(1f, 1f);
+                                break;
+                        }
+                    }
+                    break;
+            }
+            Destroy(collision.gameObject);
+        }
+    }
+
+    void Boom()
+    {
+        if (!Input.GetButton("Fire1") || isHaveBoom == false)
+            return;
+
+        isHaveBoom = false;
+        manager.UpdateBoomIcon();
+        boomEffect.SetActive(true);
+        Invoke("OffBoomEffect", 3f);
+
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            Enemy enemyLogic = enemies[i].GetComponent<Enemy>();
+            enemyLogic.OnHit(1000);
+        }
+
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("EnemyBullet");
+        for (int i = 0; i < bullets.Length; i++)
+        {
+            Destroy(bullets[i]);
+        }
+    }
+
+    void Die()
+    {
+        life--;
+        isHaveBoom = false;
+        manager.UpdateLifeIcon(life, maxLife);
+        manager.UpdateBoomIcon();
+        if (life == 0)
+        {
+            manager.GameOver();
+        }
+        else
+        {
+            manager.RespawnPlayer();
+        }
+        gameObject.SetActive(false);
+    }
+
+    void OffBoomEffect()
+    {
+        boomEffect.SetActive(false);
+    }
+
+    void HitColor()
+    {
+        spriteRenderer.color = new Color(1, 1, 1, 1);
     }
 
     void OnTriggerExit2D(Collider2D collision)
