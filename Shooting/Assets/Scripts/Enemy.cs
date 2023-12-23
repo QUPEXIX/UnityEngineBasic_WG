@@ -23,11 +23,29 @@ public class Enemy : MonoBehaviour
     public GameObject itemBoom;
     public GameObject itemCoin;
     public GameObject itemPower;
+    public ObjectManager objectManager;
 
     void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
+
+    void OnEnable()
+    {
+        switch (enemyName)
+        {
+            case 'L':
+                health = 15;
+                break;
+            case 'M':
+                health = 5;
+                break;
+            case 'S':
+                health = 3;
+                break;
+        }
+    }
+
 
     void Update()
     {
@@ -42,7 +60,8 @@ public class Enemy : MonoBehaviour
 
         if (enemyName == 'S')
         {
-            GameObject bulletS = Instantiate(bulletObjA, transform.position, transform.rotation);
+            GameObject bulletS = objectManager.MakeObj("BulletEnemyA");
+            bulletS.transform.position = transform.position;
             Rigidbody2D rigidS = bulletS.GetComponent<Rigidbody2D>();
             Vector3 dirVec = player.transform.position - transform.position;
             rigidS.AddForce(dirVec.normalized * 3, ForceMode2D.Impulse);
@@ -51,10 +70,11 @@ public class Enemy : MonoBehaviour
         }
         else if (enemyName == 'L')
         {
-            GameObject bulletL = Instantiate(bulletObjB, transform.position, transform.rotation);
+            GameObject bulletL = objectManager.MakeObj("BulletEnemyB");
+            bulletL.transform.position = transform.position;
             Rigidbody2D rigidL = bulletL.GetComponent<Rigidbody2D>();
             Vector3 dirVec = player.transform.position - transform.position;
-            rigidL.AddForce(dirVec.normalized * 1, ForceMode2D.Impulse);
+            rigidL.AddForce(dirVec.normalized * 1.5f, ForceMode2D.Impulse);
             curShotDelay = 0;
             return;
         }
@@ -78,12 +98,22 @@ public class Enemy : MonoBehaviour
             player.GetComponent<Player>().score += score;
             int ran = Random.Range(0, 12);
             if (ran == 0)
-                Instantiate(itemBoom, transform.position, itemCoin.transform.rotation);
+            {
+                GameObject itemBoom = objectManager.MakeObj("ItemBoom");
+                itemBoom.transform.position = transform.position;
+            }
             else if (ran < 3)
-                Instantiate(itemPower, transform.position, itemCoin.transform.rotation);
+            {
+                GameObject itemPower = objectManager.MakeObj("ItemPower");
+                itemPower.transform.position = transform.position;
+            }
             else if (ran < 6)
-                Instantiate(itemCoin, transform.position, itemCoin.transform.rotation);
-            Destroy(gameObject);
+            {
+                GameObject itemCoin = objectManager.MakeObj("ItemCoin");
+                itemCoin.transform.position = transform.position;
+            }
+            gameObject.SetActive(false);
+            transform.rotation = Quaternion.identity;
         }
     }
 
@@ -97,13 +127,14 @@ public class Enemy : MonoBehaviour
         if (collision.gameObject.tag == "BorderEnemy")
         {
             player.GetComponent<Player>().score -= score;
-            Destroy(gameObject);
+            gameObject.SetActive(false);
+            transform.rotation = Quaternion.identity;
         }
         else if (collision.gameObject.tag == "PlayerBullet")
         {
             Bullet bullet = collision.gameObject.GetComponent<Bullet>();
             OnHit(bullet.dmg);
-            Destroy(collision.gameObject);
+            collision.gameObject.SetActive(false);
         }
     }
 }

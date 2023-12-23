@@ -191,3 +191,4 @@ MonoBehaviour:
   itemBoom: {fileID: 6053429899730744980, guid: 53ac9eda1512b4e47bec4fd85d842372, type: 3}
   itemCoin: {fileID: 8665544660007082004, guid: 75529a23ef7de0944be642f427a4d9a9, type: 3}
   itemPower: {fileID: 1463223616522173198, guid: a2cfae249e5ff8e4f97472a6e533c64e, type: 3}
+  objectManager: {fileID: 0}
