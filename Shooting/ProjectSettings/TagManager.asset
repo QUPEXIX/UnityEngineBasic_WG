@@ -63,3 +63,9 @@ TagManager:
   - name: Bullet
     uniqueID: 111810757
     locked: 0
+  - name: Fade
+    uniqueID: 1202679095
+    locked: 0
+  - name: UI
+    uniqueID: 960443403
+    locked: 0

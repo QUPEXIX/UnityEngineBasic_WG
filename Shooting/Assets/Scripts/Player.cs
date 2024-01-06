@@ -38,6 +38,11 @@ public class Player : MonoBehaviour
 
     public GameObject[] followers;
 
+    public bool[] joyControl;
+    public bool isControl;
+    public bool isButtonA;
+    public bool isButtonB;
+
     Animator anim;
 
     void Awake()
@@ -66,13 +71,41 @@ public class Player : MonoBehaviour
         Boom();
     }
 
+    public void JoyPanel(int type)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            joyControl[i] = i == type;
+        }
+    }
+
+    public void JoyDown()
+    {
+        isControl = true;
+    }
+
+    public void JoyUp()
+    {
+        isControl = false;
+    }
+
     void Move()
     {
         float h = Input.GetAxisRaw("Horizontal");
-        if ((isTouchRight && h == 1) || (isTouchLeft && h == -1))
-            h = 0;
         float v = Input.GetAxisRaw("Vertical");
-        if ((isTouchTop && v == 1) || (isTouchBottom && v == -1))
+
+        if (joyControl[0]) { h = -1; v = 1; }
+        if (joyControl[1]) { h = 0; v = 1; }
+        if (joyControl[2]) { h = 1; v = 1; }
+        if (joyControl[3]) { h = -1; v = 0; }
+        if (joyControl[4]) { h = 1; v = 0; }
+        if (joyControl[5]) { h = -1; v = -1; }
+        if (joyControl[6]) { h = 0; v = -1; }
+        if (joyControl[7]) { h = 1; v = -1; }
+
+        if ((isTouchRight && h == 1) || (isTouchLeft && h == -1) || !isControl)
+            h = 0;
+        if ((isTouchTop && v == 1) || (isTouchBottom && v == -1) || !isControl)
             v = 0;
         Vector3 curPos = transform.position;
         Vector3 nextPos = new Vector3(h, v, 0) * speed * Time.deltaTime;
@@ -83,9 +116,29 @@ public class Player : MonoBehaviour
             anim.SetInteger("Input", (int)h);
     }
 
+    public void ButtonADown()
+    {
+        isButtonA = true;
+    }
+
+    public void ButtonAUp()
+    {
+        isButtonA = false;
+    }
+
+    public void ButtonBDown()
+    {
+        isButtonB = true;
+    }
+
+    public void ButtonBUp()
+    {
+        isButtonB = false;
+    }
+
     void Fire()
     {
-        if (!Input.GetButton("Jump"))
+        if (!Input.GetButton("Jump") && !isButtonA)
             return;
         if (curShotDelay < maxShotDelay)
             return;
@@ -300,7 +353,7 @@ public class Player : MonoBehaviour
 
     void Boom()
     {
-        if (!Input.GetButton("Fire1") || isHaveBoom == false)
+        if ((!Input.GetButton("Fire1") && !isButtonB) || isHaveBoom == false)
             return;
 
         isHaveBoom = false;
@@ -360,6 +413,7 @@ public class Player : MonoBehaviour
         isHaveBoom = false;
         gameManager.UpdateLifeIcon(life, maxLife);
         gameManager.UpdateBoomIcon();
+        gameManager.CallExplosion(transform.position, 'P');
         if (life == 0)
         {
             gameManager.GameOver();

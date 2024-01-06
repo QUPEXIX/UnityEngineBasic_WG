@@ -7,6 +7,13 @@ using System.IO;
 
 public class GameManager : MonoBehaviour
 {
+    public int stage;
+    public Animator stageAnim;
+    public Animator clearAnim;
+    public Animator FadeAnim;
+    public Transform playerPos;
+
+
     public string[] enemyObjects;
     public Transform[] spawnPoints;
 
@@ -29,13 +36,39 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         spawnList = new List<Spawn>();
-        enemyObjects = new string[] { "EnemyL", "EnemyM", "EnemyS" };
-        ReadSpawnFile();
+        enemyObjects = new string[] { "EnemyL", "EnemyM", "EnemyS", "EnemyB" };
+        StageStart();
     }
 
     void Start()
     {
         spawnDelayran = Random.Range(1f, 4f);
+    }
+
+    public void StageStart()
+    {
+        ReadSpawnFile();
+
+        player.transform.position = playerPos.position;
+
+        stageAnim.SetTrigger("On");
+        stageAnim.GetComponent<Text>().text = "STAGE " + stage + "\nStart";
+        clearAnim.GetComponent<Text>().text = "STAGE " + stage + "\nClear";
+
+        FadeAnim.SetTrigger("In");
+    }
+
+    public void StageEnd()
+    {
+        clearAnim.SetTrigger("On");
+
+        FadeAnim.SetTrigger("Out");
+
+        stage++;
+        if (stage > 2)
+            Invoke("GameOver", 2);
+        else
+            Invoke("StageStart", 3);
     }
 
     void ReadSpawnFile()
@@ -46,7 +79,7 @@ public class GameManager : MonoBehaviour
         spawnEnd = false;
 
         //리스폰 파일 읽기
-        TextAsset textFile = Resources.Load("Stage 0") as TextAsset;
+        TextAsset textFile = Resources.Load("Stage " + stage) as TextAsset;
         StringReader stringReader = new StringReader(textFile.text);
 
         while(stringReader != null)
@@ -95,6 +128,9 @@ public class GameManager : MonoBehaviour
             case "S":
                 enemyIndex = 2;
                 break;
+            case "B":
+                enemyIndex = 3;
+                break;
         }
         int enemyPoint = spawnList[spawnIndex].point;
         GameObject enemy = objectManager.MakeObj(enemyObjects[enemyIndex]);
@@ -103,6 +139,7 @@ public class GameManager : MonoBehaviour
         Rigidbody2D rigid = enemy.GetComponent<Rigidbody2D>();
         Enemy enemyLogic = enemy.GetComponent<Enemy>();
         enemyLogic.player = player;
+        enemyLogic.gameManager = this;
         enemyLogic.objectManager = objectManager;
 
         if (enemyPoint == 5 || enemyPoint == 6)
@@ -197,7 +234,7 @@ public class GameManager : MonoBehaviour
     }
     void RespawnPlayerExe()
     {
-        player.transform.position = Vector3.down * 4;
+        player.transform.position = playerPos.position;
         player.SetActive(true);
         Player playerLogic = player.GetComponent<Player>();
         playerLogic.health = playerLogic.maxHealth;
@@ -211,6 +248,15 @@ public class GameManager : MonoBehaviour
         Player playerLogic = player.GetComponent<Player>();
         playerLogic.HitColor();
         playerLogic.maxHitDelay = 0.5f;
+    }
+
+    public void CallExplosion(Vector3 pos, char type)
+    {
+        GameObject explosion = objectManager.MakeObj("Explosion");
+        Explosion explosionLogic = explosion.GetComponent<Explosion>();
+
+        explosion.transform.position = pos;
+        explosionLogic.StartExplosion(type);
     }
 
     public void GameOver()
