@@ -22,6 +22,9 @@ public class Weapon : MonoBehaviour
 
     void Update()
     {
+        if (!GameManager.Instance.isLive)
+            return;
+
         switch (id)
         {
             case 0:
@@ -56,8 +59,8 @@ public class Weapon : MonoBehaviour
         transform.localPosition = Vector3.zero;
 
         id = data.itemId;
-        damage = data.baseDamage;
-        count = data.baseCount;
+        damage = data.baseDamage * Character.Damage;
+        count = data.baseCount + Character.Count;
         for (int i = 0; i < GameManager.Instance.pool.prefabs.Length; i++)
         {
             if (data.projectile == GameManager.Instance.pool.prefabs[i])
@@ -70,13 +73,18 @@ public class Weapon : MonoBehaviour
         switch (id)
         {
             case 0:
-                speed = 150;
+                speed = 150 * Character.WeaponSpeed;
                 Batch();
                 break;
             default:
-                speed = 0.5f;
+                speed = 0.5f * Character.WeaponRate;
                 break;
         }
+
+        //Hand Set
+        Hand hand = player.hands[(int)data.itemType];
+        hand.spriter.sprite = data.hand;
+        hand.gameObject.SetActive(true);
 
         player.BroadcastMessage("ApplyGear", SendMessageOptions.DontRequireReceiver);
     }
@@ -101,7 +109,7 @@ public class Weapon : MonoBehaviour
             bullet.Rotate(rotVec);
             bullet.Translate(bullet.up * 1.5f, Space.World);
 
-            bullet.GetComponent<Bullet>().Init(damage, -1, Vector3.zero); //-1은 무한으로 관통을 의미
+            bullet.GetComponent<Bullet>().Init(damage, -100, Vector3.zero); //-1은 무한으로 관통을 의미
         }
     }
 

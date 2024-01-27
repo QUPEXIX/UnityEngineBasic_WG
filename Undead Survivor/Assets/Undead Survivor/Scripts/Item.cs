@@ -12,6 +12,8 @@ public class Item : MonoBehaviour
 
     Image icon;
     Text textLevel;
+    Text textName;
+    Text textDesc;
 
     void Awake()
     {
@@ -20,11 +22,39 @@ public class Item : MonoBehaviour
 
         Text[] texts = GetComponentsInChildren<Text>();
         textLevel = texts[0];
+        textName = texts[1];
+        textDesc = texts[2];
+        textName.text = data.itemName;
     }
 
-    void LateUpdate()
+    void OnEnable()
     {
         textLevel.text = "Lv." + level;
+
+        switch (data.itemType)
+        {
+            case ItemData.ItemType.Melee:
+                if (level == 0)
+                    textDesc.text = "근거리 무기 추가";
+                else if (data.counts[level] == 0)
+                    textDesc.text = string.Format("데미지 {0}% 증가", data.damages[level] * 100);
+                else
+                    textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100, data.counts[level]);
+                break;
+            case ItemData.ItemType.Range:
+                if (level == 0)
+                    textDesc.text = "원거리 무기 추가";
+                else
+                    textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100, data.counts[level]);
+                break;
+            case ItemData.ItemType.Glove:
+            case ItemData.ItemType.Shoe:
+                textDesc.text = string.Format(data.itemDesc, data.damages[level] * 100);
+                break;
+            default:
+                textDesc.text = string.Format(data.itemDesc);
+                break;
+        }
     }
 
     public void OnClick()
@@ -41,10 +71,10 @@ public class Item : MonoBehaviour
                 }
                 else
                 {
-                    float nextDamage = data.baseDamage;
+                    float nextDamage = data.baseDamage * Character.Damage;
                     int nextCount = 0;
 
-                    nextDamage += data.baseDamage * data.damages[level];
+                    nextDamage += data.baseDamage * data.damages[level] * Character.Damage;
                     nextCount += data.counts[level];
 
                     weapon.LevelUp(nextDamage, nextCount);
