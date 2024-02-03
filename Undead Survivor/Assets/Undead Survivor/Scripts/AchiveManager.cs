@@ -10,7 +10,7 @@ public class AchiveManager : MonoBehaviour
     public GameObject[] unlockCharacter;
     public GameObject uiNotice;
 
-    enum Achive { UnlockBean, UnlockPotato }
+    enum Achive { UnlockBarley, UnlockBean, UnlockPotato }
     Achive[] achives;
     WaitForSecondsRealtime wait;
 
@@ -58,8 +58,13 @@ public class AchiveManager : MonoBehaviour
 
         switch (achive)
         {
+            case Achive.UnlockBarley:
+                isAchive = GameManager.Instance.gameTime == GameManager.Instance.maxGameTime;
+                break;
             case Achive.UnlockBean:
-                isAchive = GameManager.Instance.kill >= 10;
+                isAchive = GameManager.Instance.totalKill >= 500;
+                if (GameManager.Instance.totalKill == 500)
+                    PlayerPrefs.SetInt("TotalKill", GameManager.Instance.totalKill);
                 break;
             case Achive.UnlockPotato:
                 isAchive = GameManager.Instance.gameTime == GameManager.Instance.maxGameTime;
@@ -82,6 +87,7 @@ public class AchiveManager : MonoBehaviour
     IEnumerator NoticeRoutine()
     {
         uiNotice.SetActive(true);
+        AudioManager.Instance.PlaySfx(AudioManager.Sfx.LevelUp);
 
         yield return wait;
 

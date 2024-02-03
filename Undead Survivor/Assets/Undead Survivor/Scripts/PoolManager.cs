@@ -6,6 +6,7 @@ public class PoolManager : MonoBehaviour
 {
     //프리펩을 보관할 변수
     public GameObject[] prefabs;
+    public string[] poolTags;
 
     //풀 담당을 하는 리스트들
     List<GameObject>[] pools;
@@ -31,6 +32,7 @@ public class PoolManager : MonoBehaviour
             {
                 select = item;
                 select.SetActive(true);
+                StartCoroutine(PreventHittingImmediately(select, index));
                 break;
             }
         }
@@ -39,9 +41,17 @@ public class PoolManager : MonoBehaviour
         if (!select)
         {
             select = Instantiate(prefabs[index], transform);
+            StartCoroutine(PreventHittingImmediately(select, index));
             pools[index].Add(select);
         }
 
         return select;
+    }
+
+    IEnumerator PreventHittingImmediately(GameObject select, int index)
+    {
+        yield return new WaitForFixedUpdate();
+
+        select.tag = poolTags[index];
     }
 }

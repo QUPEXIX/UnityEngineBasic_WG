@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class GameManager : MonoBehaviour
     public bool isLive;
     public float gameTime;
     public float maxGameTime = 2 * 10f;
+    public int totalKill;
 
     [Header("# Player Info")]
     public int playerId;
@@ -29,11 +31,22 @@ public class GameManager : MonoBehaviour
     public Transform uiJoy;
     public GameObject enemyCleaner;
     public GameObject hud;
+    public Text totalKillText;
 
     void Awake()
     {
         Instance = this;
+        if (!PlayerPrefs.HasKey("TotalKill"))
+        {
+            totalKill = 0;
+            PlayerPrefs.SetInt("TotalKill", totalKill);
+        }
+        else
+        {
+            totalKill = PlayerPrefs.GetInt("TotalKill");
+        }
 
+        totalKillText.text = totalKill.ToString();
         Application.targetFrameRate = 60;
     }
 
@@ -45,6 +58,9 @@ public class GameManager : MonoBehaviour
         player.gameObject.SetActive(true);
         uiLevelUp.Select(playerId % 2);
         Resume();
+
+        AudioManager.Instance.PlaySfx(AudioManager.Sfx.Select);
+        AudioManager.Instance.PlayBgm(true);
     }
 
     public void GameOver()
@@ -56,11 +72,16 @@ public class GameManager : MonoBehaviour
     {
         isLive = false;
 
+        PlayerPrefs.SetInt("TotalKill", totalKill);
+
         yield return new WaitForSeconds(0.5f);
 
         uiResult.gameObject.SetActive(true);
         uiResult.Lose();
         Stop();
+
+        AudioManager.Instance.PlaySfx(AudioManager.Sfx.Lose);
+        AudioManager.Instance.PlayBgm(false);
     }
 
     public void GameVictory()
@@ -73,11 +94,16 @@ public class GameManager : MonoBehaviour
         isLive = false;
         enemyCleaner.SetActive(true);
 
+        PlayerPrefs.SetInt("TotalKill", totalKill);
+
         yield return new WaitForSeconds(0.5f);
 
         uiResult.gameObject.SetActive(true);
         uiResult.Win();
         Stop();
+
+        AudioManager.Instance.PlaySfx(AudioManager.Sfx.Win);
+        AudioManager.Instance.PlayBgm(false);
     }
 
     public void GameRetry()

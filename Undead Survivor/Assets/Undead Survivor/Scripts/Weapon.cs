@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -109,7 +108,7 @@ public class Weapon : MonoBehaviour
             bullet.Rotate(rotVec);
             bullet.Translate(bullet.up * 1.5f, Space.World);
 
-            bullet.GetComponent<Bullet>().Init(damage, -100, Vector3.zero); //-1은 무한으로 관통을 의미
+            bullet.GetComponent<Bullet>().Init(damage, -100, Vector3.zero, false); //-100은 무한으로 관통을 의미
         }
     }
 
@@ -125,6 +124,8 @@ public class Weapon : MonoBehaviour
         Transform bullet = GameManager.Instance.pool.Get(prefabId).transform;
         bullet.position = transform.position;
         bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        bullet.GetComponent<Bullet>().Init(damage, count, dir);
+        bullet.GetComponent<Bullet>().Init(damage, count, dir, false);
+
+        AudioManager.Instance.PlaySfx(AudioManager.Sfx.Range);
     }
 }

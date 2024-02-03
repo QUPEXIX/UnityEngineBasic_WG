@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8124043545125150137}
   m_Layer: 0
   m_Name: Bullet 1
-  m_TagString: Bullet
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 5868332047972236760}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.8, y: 1.45, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -161,5 +161,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 831dde8cbd4c83e48ad9a17930bc2aa2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemy: 0
   damage: 100
   per: 0
