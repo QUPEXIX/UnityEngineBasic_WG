@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [Header("# Game Controll")]
     public bool isLive;
+    public bool isBossBattle;
     public float gameTime;
     public float maxGameTime = 2 * 10f;
     public int totalKill;
@@ -28,6 +29,9 @@ public class GameManager : MonoBehaviour
     public PoolManager pool;
     public LevelUp uiLevelUp;
     public Result uiResult;
+    public Text bossStart;
+    public GameObject boss;
+    public Spawner spawn;
     public Transform uiJoy;
     public GameObject enemyCleaner;
     public GameObject hud;
@@ -84,6 +88,43 @@ public class GameManager : MonoBehaviour
         AudioManager.Instance.PlayBgm(false);
     }
 
+    public void BossStart()
+    {
+        StartCoroutine(BossStartRoutine());
+    }
+
+    IEnumerator BossStartRoutine()
+    {
+        hud.transform.GetChild(0).GetChild(1).GetChild(0).GetComponent<Image>().color = new Color(1, 0.4941176f, 0.9960784f, 1);
+        enemyCleaner.SetActive(true);
+        bossStart.gameObject.SetActive(true);
+
+        for (int i = 0; i < 2; i++)
+        {
+            yield return new WaitForSeconds(0.5f);
+
+            bossStart.color = new Color(bossStart.color.r, bossStart.color.g, bossStart.color.b, 0);
+
+            yield return new WaitForSeconds(0.5f);
+
+            bossStart.color = new Color(bossStart.color.r, bossStart.color.g, bossStart.color.b, 1);
+        }
+
+        enemyCleaner.SetActive(false);
+
+        yield return new WaitForSeconds(0.5f);
+
+        bossStart.gameObject.SetActive(false);
+
+        boss = Instantiate(pool.prefabs[0]);
+        boss.transform.position = spawn.transform.GetChild(0).position;
+        boss.transform.position += new Vector3(0, 1, 0);
+        boss.GetComponent<Enemy>().Init(spawn.spawnDataBoss);
+        boss.GetComponent<Enemy>().isBoss = true;
+        boss.tag = "Enemy";
+        hud.transform.GetChild(0).GetComponent<HUD>().type = HUD.InfoType.BossHealth;
+    }
+
     public void GameVictory()
     {
         StartCoroutine(GameVictoryRoutine());
@@ -123,17 +164,19 @@ public class GameManager : MonoBehaviour
 
         gameTime += Time.deltaTime;
 
-        if (gameTime > maxGameTime)
+        if (gameTime > maxGameTime && !isBossBattle)
         {
             gameTime = maxGameTime;
-            hud.SetActive(false);
-            GameVictory();
+            isBossBattle = true;
+            for (int i = 1; i < hud.transform.childCount - 1; i++)
+                hud.transform.GetChild(i).gameObject.SetActive(false);
+            BossStart();
         }
     }
 
     public void GetExp()
     {
-        if (!isLive)
+        if (!isLive || isBossBattle)
             return;
 
         exp++;

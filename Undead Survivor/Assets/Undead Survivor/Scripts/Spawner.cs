@@ -1,13 +1,16 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
     public Transform[] spawnPoint;
     public SpawnData[] spawnData;
+    public SpawnData spawnDataBoss;
     public float[] spawnTimes;
-
+    
     int level;
     int spawnTimeLevel;
     float timer;
@@ -19,7 +22,7 @@ public class Spawner : MonoBehaviour
 
     void Update()
     {
-        if (!GameManager.Instance.isLive)
+        if (!GameManager.Instance.isLive || GameManager.Instance.isBossBattle)
             return;
 
         timer += Time.deltaTime;
@@ -45,9 +48,12 @@ public class Spawner : MonoBehaviour
 public class SpawnData
 {
     public int spriteType;
+    public float size;
     public Color color;
     public float health;
     public float speed;
     public float dmg;
-    public float rangeDelay;
+    public Enemy.Patterns[] patterns;
+    [Header("0: rangeDmg, 1: rangeDelay, 2: rangeCast\n3: bulletSpeed 4:bulletSize 5: bulletDelay 6: bulletLocation\n7: rushDmg, 8: rushDelay, 9: rushCastOut, 10: rushCastIn, 11: rushSpeed")]
+    public float[] patternVars = new float[12];
 }

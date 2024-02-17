@@ -354,11 +354,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 503b0d13734f0ca4f8724fe55f5b287b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isBoss: 0
   speed: 0
   health: 0
   maxHealth: 0
+  basicDmg: 0
   dmg: 0
-  rangeDelay: 0
   targertLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -369,6 +370,20 @@ MonoBehaviour:
   - {fileID: 22100000, guid: 8d1d920724ffb8a409ce0e458dc4b7a9, type: 2}
   - {fileID: 22100000, guid: 25f7a818644b68042bb0c0c2a28d1550, type: 2}
   target: {fileID: 0}
+  patterns: 
+  timer: 0
+  rangeDmg: 0
+  rangeDelay: 0
+  rangeCast: 0
+  bulletSpeed: 0
+  bulletSize: 0
+  bulletDelay: 0
+  bulletLocation: 0
+  rushDmg: 0
+  rushDelay: 0
+  rushCastOut: 0
+  rushCastIn: 0
+  rushSpeed: 0
 --- !u!114 &4169051109409140738
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -108,7 +108,7 @@ public class Weapon : MonoBehaviour
             bullet.Rotate(rotVec);
             bullet.Translate(bullet.up * 1.5f, Space.World);
 
-            bullet.GetComponent<Bullet>().Init(damage, -100, Vector3.zero, false); //-100은 무한으로 관통을 의미
+            bullet.GetComponent<Bullet>().Init(false, damage, -100, Vector3.zero, 10); //-100은 무한으로 관통을 의미
         }
     }
 
@@ -124,7 +124,7 @@ public class Weapon : MonoBehaviour
         Transform bullet = GameManager.Instance.pool.Get(prefabId).transform;
         bullet.position = transform.position;
         bullet.rotation = Quaternion.FromToRotation(Vector3.up, dir);
-        bullet.GetComponent<Bullet>().Init(damage, count, dir, false);
+        bullet.GetComponent<Bullet>().Init(false, damage, count, dir, 10);
 
         AudioManager.Instance.PlaySfx(AudioManager.Sfx.Range);
     }

@@ -66,7 +66,6 @@ public class Player : MonoBehaviour
             return;
 
         GameManager.Instance.health -= collision.GetComponent<Bullet>().damage;
-        Debug.Log("รั");
 
         if (GameManager.Instance.health < 0)
             Die();
@@ -78,7 +77,6 @@ public class Player : MonoBehaviour
             return;
 
         GameManager.Instance.health -= Time.deltaTime * 10 * collision.gameObject.GetComponent<Enemy>().dmg;
-        Debug.Log("ภ๛");
 
         if (GameManager.Instance.health < 0)
             Die();

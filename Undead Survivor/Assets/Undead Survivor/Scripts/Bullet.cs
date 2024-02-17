@@ -8,6 +8,9 @@ public class Bullet : MonoBehaviour
     public float damage;
     public int per;
 
+    bool isInArea;
+    float disabledTimer;
+
     Rigidbody2D rigid;
 
     void Awake()
@@ -15,7 +18,21 @@ public class Bullet : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
     }
 
-    public void Init(float damage, int per, Vector3 dir, bool isEnemy)
+    void Update()
+    {
+        if (!isInArea)
+        {
+            disabledTimer += Time.deltaTime;
+            if (disabledTimer > 1)
+            {
+                gameObject.tag = "Untagged";
+                gameObject.SetActive(false);
+                disabledTimer = 0;
+            }
+        }
+    }
+
+    public void Init(bool isEnemy, float damage, int per, Vector3 dir, float speed)
     {
         this.isEnemy = isEnemy;
         this.damage = damage;
@@ -23,10 +40,7 @@ public class Bullet : MonoBehaviour
 
         if (per > -100)
         {
-            if (isEnemy)
-                rigid.velocity = dir * 2;
-            else
-                rigid.velocity = dir * 10;
+            rigid.velocity = dir * speed;
         }
     }
 
@@ -50,7 +64,14 @@ public class Bullet : MonoBehaviour
         if (!collision.CompareTag("Area") || per == -100)
             return;
 
-        gameObject.tag = "Untagged";
-        gameObject.SetActive(false);
+        isInArea = false;
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (!collision.CompareTag("Area"))
+            return;
+
+        isInArea = true;
     }
 }

@@ -38,14 +38,20 @@ public class Reposition : MonoBehaviour
                     transform.Translate(Vector3.up * dirY * 40);
                 }
                 break;
-
             case "Enemy":
                 if (!coll.enabled)
                     return;
 
                 Vector3 dist = playerPos - myPos;
-                Vector3 ran = new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0);
-                transform.Translate(dist + ran * 2);
+                if (GetComponent<Enemy>().isBoss)
+                {
+                    transform.Translate(dist * 2.1f);
+                }
+                else
+                {
+                    Vector3 ran = new Vector3(Random.Range(-3, 3), Random.Range(-3, 3), 0);
+                    transform.Translate(dist + ran * 2);
+                }
                 break;
         }
     }

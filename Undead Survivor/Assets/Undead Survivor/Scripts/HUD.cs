@@ -6,7 +6,7 @@ using static Cinemachine.DocumentationSortingAttribute;
 
 public class HUD : MonoBehaviour
 {
-    public enum InfoType { Exp, Level, Kill, Time, Health }
+    public enum InfoType { Exp, Level, Kill, Time, Health, BossHealth }
     public InfoType type;
 
     Text myText;
@@ -23,9 +23,16 @@ public class HUD : MonoBehaviour
         switch (type)
         {
             case InfoType.Exp:
-                float curExp = GameManager.Instance.exp;
-                float maxExp = GameManager.Instance.nextExp[Mathf.Min(GameManager.Instance.level, GameManager.Instance.nextExp.Length - 1)];
-                mySlider.value = curExp / maxExp;
+                if (GameManager.Instance.isBossBattle) //보스가 생성되기 전 체력 표시
+                {
+                    mySlider.value = 1;
+                }
+                else
+                {
+                    float curExp = GameManager.Instance.exp;
+                    float maxExp = GameManager.Instance.nextExp[Mathf.Min(GameManager.Instance.level, GameManager.Instance.nextExp.Length - 1)];
+                    mySlider.value = curExp / maxExp;
+                }
                 break;
             case InfoType.Level:
                 myText.text = string.Format("Lv.{0:F0}", GameManager.Instance.level);
@@ -43,6 +50,11 @@ public class HUD : MonoBehaviour
                 float curHealth = GameManager.Instance.health;
                 float maxHealth = GameManager.Instance.maxHealth;
                 mySlider.value = curHealth / maxHealth;
+                break;
+            case InfoType.BossHealth:
+                float curBossHealth = GameManager.Instance.boss.GetComponent<Enemy>().health;
+                float maxBossHealth = GameManager.Instance.boss.GetComponent<Enemy>().maxHealth;
+                mySlider.value = curBossHealth / maxBossHealth;
                 break;
         }
     }
